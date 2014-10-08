@@ -1,11 +1,13 @@
 Summary:	Small and clean implementation of an ATA S.M.A.R.T
 Name:		libatasmart
 Version:	0.19
-Release:	1
+Release:	3
 License:	LGPL
 Group:		Applications
 Source0:	http://0pointer.de/public/%{name}-%{version}.tar.xz
 # Source0-md5:	53afe2b155c36f658e121fe6def33e77
+Patch0:		0001-Dont-test-undefined-bits.patch
+Patch1:		0002-Drop-our-own-many-bad-sectors-heuristic.patch
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	libtool
@@ -20,6 +22,7 @@ Small and clean implementation of an ATA S.M.A.R.T.
 Summary:	Header files for atasmart library
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
+Requires:	udev-devel
 
 %description devel
 This is the package containing the header files for atasmart
@@ -27,6 +30,8 @@ library.
 
 %prep
 %setup -q
+%patch0 -p1
+%patch1 -p1
 
 %build
 %{__libtoolize}
@@ -44,6 +49,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
+
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/*.la
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -64,4 +71,4 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/lib*.so
 %{_includedir}/*.h
 %{_pkgconfigdir}/*.pc
-
+%{_datadir}/vala/vapi/atasmart.vapi
